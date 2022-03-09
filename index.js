@@ -213,3 +213,18 @@ const db = mysql.createConnection(
 
     })
     };
+
+    
+    // Add employee function
+    function addEmployee() {
+
+        //  Uses db.query to grab current role available in database
+        db.query('SELECT * FROM company_db.role;', function (err, results) {
+
+            // creating array variable to hold available roles
+            let roleArray = [];
+
+            // Takes each result and pushes into roleArray with title and id
+        results.forEach(result => roleArray.push({ name: result.title, value: result.id}));
+        })
+    }
