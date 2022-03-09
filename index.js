@@ -226,5 +226,41 @@ const db = mysql.createConnection(
 
             // Takes each result and pushes into roleArray with title and id
         results.forEach(result => roleArray.push({ name: result.title, value: result.id}));
+
+        // Inquire prompt to ask first name, last name, and role for employee
+        return inquirer.prompt([
+            {
+                type: "input",
+                name: "employeeFirstName",
+                message: "What is the employee's first name?"
+            },
+            {
+                type: "input",
+                name: "employeeLastName",
+                message: "What is the employee's last name?"
+            },
+            {
+                type: "list",
+                name: "employeeRole",
+                message: "What role will the employee have?",
+                choices: roleArray // list of available roles from query above
+            },
+        ])
+
+        // Puts answers into new arrays to be inserted into database
+        .then((answers) => {
+            let newFirstName = answers.employeeFirstName;
+            let newLastName = answers.employeeLastName;
+            let newEmployeeRole = answers.employeeRole;
+
+            // Database query to Select all employees from db
+            db.query('SELECT * FROM company_db.employees;', function (err, results) {
+
+                // Initializes array to hold all employees
+                let employeeNameArray = [];
+
+            // 
+            })
+        })
         })
     }
