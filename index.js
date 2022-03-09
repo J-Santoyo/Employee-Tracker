@@ -160,7 +160,38 @@ const db = mysql.createConnection(
 
             // Database query add the department name entered in the prompt into the list of departments in the table
             db.query("INSERT INTO department (name) VALUES (?)", [answer.departmentName], function (err, results) {
-                
+
             })
+
+            // Invokes the main menu
+            userOptions();
+        })
+    };
+
+    // Function to add a new role
+    function addRole() {
+
+        // Database query to SELECT all available roles from the department table
+        db.query('SELECT * FROM company_db.department;', function (err, results) {
+
+            // Initializes an empty departmentArray to hold dpartment options for role to exist
+            let departmentArray = [];
+
+            // Takes each results and adds it to the departmentArray
+        results.forEach(result => departmentArray.push({name: result.name, value: result.id}));
+
+        // invokes the inquirer prompts
+        return inquirer.prompt([
+            {
+                type: "input",
+                name: "roleName",
+                message: "What is the name of the role you would like to add?"
+            },
+            {
+                type: "input",
+                name: "roleSalary",
+                message: "What is the salary of this role?"
+            }
+        ])
         })
     }
