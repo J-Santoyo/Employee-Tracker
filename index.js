@@ -191,7 +191,25 @@ const db = mysql.createConnection(
                 type: "input",
                 name: "roleSalary",
                 message: "What is the salary of this role?"
+            },
+            {
+                type: "list",
+                name: "roleDepartment",
+                message: "What department will this role work in?",
+                choices: departmentArray
             }
         ])
+
+        .then((answers) => {
+
+            // Database query to insert the response into the role table
+            db.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", [answers.roleName, answers.roleSalary, answers.roleDepartment], function (err, results) {
+                console.log(err);
+            })
+
+            // Invokes the main menu
+            userOptions();
         })
-    }
+
+    })
+    };
