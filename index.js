@@ -294,5 +294,61 @@ function addEmployee() {
 // Update employee function
 function updateEmployeeRole() {
 
-    
-}
+    // Database query to select all employees from db
+    db.query('SELECT * FROM company_db.employee;', function (err, results) {
+
+        // Initializes empty array to add all current employees
+        let employeeNameArray = [];
+
+    // Takes the results of query and adds them to employeeNameArray
+    results.forEach(result => employeeNameArray.push({ name: result.first_name + ' ' + result.last_name, value: result.id}));
+
+        return inquirer.prompt([
+            {
+                type: "list",
+                name: "updateEmployee",
+                message: "Which employee are you updating today?",
+                choices: employeeNameArray // lists all employee names
+            },
+        ])
+
+        .then((answer) => {
+
+            // Sets the employeeID variable equal to the response from previous prompt selection
+            let employeeID = answer.updateEmployee;
+
+        // Database query that selects all roles from the database
+        db.query('SELECT * FROM company_db.role;', function (err, results) {
+
+            // Initializes an empty array for current role options
+            let roleOptions = [];
+
+        // Takes each available role and adds it to the roleOptions array
+        results.forEach(result => roleOptions.push({ name: result.title, value: result.id}));
+
+            // Invokes the inquirer prompt to get employee's updated role
+            return inquirer.prompt([
+                {
+                    type: "list",
+                    name: "updateRole",
+                    message: "What is the employee's new role?",
+                    choices: roleOptions
+                }
+            ])
+
+        .then((answer) => {
+
+            // Sets the roleID variable equal to response from previous prompt
+            let roleID = answer.updateRole;
+
+            // Database query to update the company_db employees
+            db.query('UPDATE company_db.employee SET role_id = ? WHERE id =?', [roleID, employeeID], function (err, results) {
+
+                // Invokes main menu
+                userOptions();
+            })
+        })
+        })
+        })
+    })
+};
