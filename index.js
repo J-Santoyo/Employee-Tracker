@@ -17,26 +17,26 @@ const db = mysql.createConnection(
 );
 
 // Instruction to throw an error if there is one
-    db.connect( (err) => {
-        if (err){
-            throw error;
+db.connect((err) => {
+    if (err) {
+        throw error;
+    }
+});
+
+
+// Initializing the prompt to present the main menu of options for the user
+userOptions();
+
+// Function for userOptions with array of inquirer questions
+function userOptions() {
+    return inquirer.prompt([
+        {
+            type: "list",
+            name: "displayOptions",
+            message: "What would you like to do?",
+            choices: ["View All Departments", "View All Roles", "View All Employees", "Add Department", "Add Role", "Add Employee", "Update Employee Role"]
         }
-    });
-
-
-    // Initializing the prompt to present the main menu of options for the user
-    userOptions();
-
-    // Function for userOptions with array of inquirer questions
-    function userOptions() {
-        return inquirer.prompt([
-            {
-                type: "list",
-                name: "displayOptions",
-                message: "What would you like to do?",
-                choices: ["View All Departments", "View All Roles", "View All Employees", "Add Department", "Add Role", "Add Employee", "Update Employee Role"]
-            }
-        ])
+    ])
 
         // Conditional statement to run the respective function dependent upon which option is selected in previous prompt
         .then((answers) => {
@@ -62,99 +62,47 @@ const db = mysql.createConnection(
                 updateEmployeeRole();
             }
         })
-    };
+};
 
-    // Function to show current departments
-    function viewDepartments() {
+// Function to show current departments
+function viewDepartments() {
 
-        // Database query to SELECT all options from the available departments
-        db.query('SELECT * FROM company_db.department;', function (err, results) {
+    // Database query to SELECT all options from the available departments
+    db.query('SELECT * FROM company_db.department;', function (err, results) {
 
-            // Displays the results in a table
-            console.table(results);
+        // Displays the results in a table
+        console.table(results);
 
-            // Invokes the main menu
-            userOptions();
-        })
-    };
+        // Invokes the main menu
+        userOptions();
+    })
+};
 
-    // Function to show all current roles
-    function viewRoles() {
+// Function to show all current roles
+function viewRoles() {
 
-        // Database query to SELECT role ID, title, department, and salary.
-        db.query('SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id;', function (err, results) {
+    // Database query to SELECT role ID, title, department, and salary.
+    db.query('SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id;', function (err, results) {
 
-            // Displays the results in a table
-            console.table(results);
+        // Displays the results in a table
+        console.table(results);
 
-            // Invokes the main menu
-            userOptions();
-        })
-    };
+        // Invokes the main menu
+        userOptions();
+    })
+};
 
-    // Function to add a department
-    function addDepartment() {
+// Function to add a department
+function addDepartment() {
 
-        // Calls the inquirer prompt
-        return inquirer.prompt([
-            {
-                type: "input",
-                name: "departmentName",
-                message: "What is the name of the department you would like to add?"
-            },
-        ])
-
-        .then(function (answer) {
-
-            // Database query add the department name entered in the prompt into the list of departments in the table
-            db.query("INSERT INTO department (name) VALUES (?)", [answer.departmentName], function (err, results) {
-
-            })
-
-            // Invokes the main menu
-            userOptions();
-        })
-    };
-
-    // Function to show all current roles
-    function viewRoles() {
-
-        // Database query to SELECT role ID, title, department, and salary.
-        db.query('SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id;', function (err, results) {
-
-            // Displays the results in a table
-            console.table(results);
-
-            // Invokes the main menu
-            userOptions();
-        })
-    };
-
-    // Function to show all current employees
-    function viewEmployees() {
-
-        // Database query to SELECT employee id, first name, last name, title, department, salary, manager's name
-        db.query('SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name, role.salary, CONCAT (manager.first_name, " ", manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee manager ON employee.manager_id = manager.id', function (err, results) {
-
-            // Displays the results in a table
-            console.table(results);
-
-            // Invokes the main menu
-            userOptions();
-        })
-    };
-
-    // Function to add a department
-    function addDepartment() {
-
-        // Calls the inquirer prompt
-        return inquirer.prompt([
-            {
-                type: "input",
-                name: "departmentName",
-                message: "What is the name of the department you would like to add?"
-            },
-        ])
+    // Calls the inquirer prompt
+    return inquirer.prompt([
+        {
+            type: "input",
+            name: "departmentName",
+            message: "What is the name of the department you would like to add?"
+        },
+    ])
 
         .then(function (answer) {
 
@@ -166,19 +114,71 @@ const db = mysql.createConnection(
             // Invokes the main menu
             userOptions();
         })
-    };
+};
 
-    // Function to add a new role
-    function addRole() {
+// Function to show all current roles
+function viewRoles() {
 
-        // Database query to SELECT all available roles from the department table
-        db.query('SELECT * FROM company_db.department;', function (err, results) {
+    // Database query to SELECT role ID, title, department, and salary.
+    db.query('SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id;', function (err, results) {
 
-            // Initializes an empty departmentArray to hold dpartment options for role to exist
-            let departmentArray = [];
+        // Displays the results in a table
+        console.table(results);
 
-            // Takes each results and adds it to the departmentArray
-        results.forEach(result => departmentArray.push({name: result.name, value: result.id}));
+        // Invokes the main menu
+        userOptions();
+    })
+};
+
+// Function to show all current employees
+function viewEmployees() {
+
+    // Database query to SELECT employee id, first name, last name, title, department, salary, manager's name
+    db.query('SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name, role.salary, CONCAT (manager.first_name, " ", manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee manager ON employee.manager_id = manager.id', function (err, results) {
+
+        // Displays the results in a table
+        console.table(results);
+
+        // Invokes the main menu
+        userOptions();
+    })
+};
+
+// Function to add a department
+function addDepartment() {
+
+    // Calls the inquirer prompt
+    return inquirer.prompt([
+        {
+            type: "input",
+            name: "departmentName",
+            message: "What is the name of the department you would like to add?"
+        },
+    ])
+
+        .then(function (answer) {
+
+            // Database query add the department name entered in the prompt into the list of departments in the table
+            db.query("INSERT INTO department (name) VALUES (?)", [answer.departmentName], function (err, results) {
+
+            })
+
+            // Invokes the main menu
+            userOptions();
+        })
+};
+
+// Function to add a new role
+function addRole() {
+
+    // Database query to SELECT all available roles from the department table
+    db.query('SELECT * FROM company_db.department;', function (err, results) {
+
+        // Initializes an empty departmentArray to hold dpartment options for role to exist
+        let departmentArray = [];
+
+        // Takes each results and adds it to the departmentArray
+        results.forEach(result => departmentArray.push({ name: result.name, value: result.id }));
 
         // invokes the inquirer prompts
         return inquirer.prompt([
@@ -200,32 +200,32 @@ const db = mysql.createConnection(
             }
         ])
 
-        .then((answers) => {
+            .then((answers) => {
 
-            // Database query to insert the response into the role table
-            db.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", [answers.roleName, answers.roleSalary, answers.roleDepartment], function (err, results) {
-                console.log(err);
+                // Database query to insert the response into the role table
+                db.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", [answers.roleName, answers.roleSalary, answers.roleDepartment], function (err, results) {
+                    console.log(err);
+                })
+
+                // Invokes the main menu
+                userOptions();
             })
 
-            // Invokes the main menu
-            userOptions();
-        })
-
     })
-    };
+};
 
-    
-    // Add employee function
-    function addEmployee() {
 
-        //  Uses db.query to grab current role available in database
-        db.query('SELECT * FROM company_db.role;', function (err, results) {
+// Add employee function
+function addEmployee() {
 
-            // creating array variable to hold available roles
-            let roleArray = [];
+    //  Uses db.query to grab current role available in database
+    db.query('SELECT * FROM company_db.role;', function (err, results) {
 
-            // Takes each result and pushes into roleArray with title and id
-        results.forEach(result => roleArray.push({ name: result.title, value: result.id}));
+        // creating array variable to hold available roles
+        let roleArray = [];
+
+        // Takes each result and pushes into roleArray with title and id
+        results.forEach(result => roleArray.push({ name: result.title, value: result.id }));
 
         // Inquire prompt to ask first name, last name, and role for employee
         return inquirer.prompt([
@@ -247,20 +247,52 @@ const db = mysql.createConnection(
             },
         ])
 
-        // Puts answers into new arrays to be inserted into database
-        .then((answers) => {
-            let newFirstName = answers.employeeFirstName;
-            let newLastName = answers.employeeLastName;
-            let newEmployeeRole = answers.employeeRole;
+            // Puts answers into new arrays to be inserted into database
+            .then((answers) => {
+                let newFirstName = answers.employeeFirstName;
+                let newLastName = answers.employeeLastName;
+                let newEmployeeRole = answers.employeeRole;
 
-            // Database query to Select all employees from db
-            db.query('SELECT * FROM company_db.employees;', function (err, results) {
+                // Database query to Select all employees from db
+                db.query('SELECT * FROM company_db.employees;', function (err, results) {
 
-                // Initializes array to hold all employees
-                let employeeNameArray = [];
+                    // Initializes array to hold all employees
+                    let employeeNameArray = [];
 
-            // 
+                    // Adds each result to the employeeNameArray
+                    result.forEach(result => employeeNameArray.push({ name: result.first_name + ' ' + result.last_name, value: result.id }));
+
+                    // Invokes the inquirer prompt to ask employee's manager
+                    return inquirer.prompt([
+                        {
+                            type: "list",
+                            name: "employeeManager",
+                            message: "Who is the employee's manager?",
+                            choices: employeeNameArray
+                        },
+                    ])
+
+
+                        .then((answers) => {
+
+                            // Sets the response to the prompt equal to variable managerOptions
+                            let managerOptions = answers.employeeManager;
+
+                            // Database query to insert the responses from the add employee prompt to employee table
+                            db.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [newFirstName, newLastName, newEmployeeRole, managerOptions], function (err, results) {
+                                console.log(err);
+                            })
+
+                            // Invokes main menu
+                            userOptions();
+                        })
+                })
             })
-        })
-        })
-    }
+    })
+};
+
+// Update employee function
+function updateEmployeeRole() {
+
+    
+}
