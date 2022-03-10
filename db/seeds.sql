@@ -22,4 +22,13 @@ VALUES ("Sales Manager", 120000, 1), --1
 
 -- Number = employee ID number
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES 
+VALUES ("Dwight", "Schrute", 9, NULL), --1
+        ("Michael", "Scott", 1, NULL), --2
+        ("Pam", "Beesly", 3, NULL), --3
+        ("Jim", "Halpert", 5, NULL), --4
+        ("Jan", "Levinson", 7, NULL), --5
+        ("Angela", "Martin", 8, 5), --6
+        ("Kevin", "Malone", 10, 1), --7
+        ("Ryan", "Howard", 6, 4), --8
+        ("Andy", "Bernard", 2, 2), --9
+        ("Holly", "Flax", 4, 3); --10
